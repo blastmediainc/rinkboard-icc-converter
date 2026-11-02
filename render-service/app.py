@@ -24,8 +24,8 @@ def convert():
  try:
   with pikepdf.open(io.BytesIO(data)) as pdf:
    ocgs=pdf.Root.get('/OCProperties',Dictionary()).get('/OCGs',Array())
-   names={str(o.get('/Name','')) for o in ocgs}
-   if not {'Artwork','Thru Cut'}.issubset(names):raise ValueError('Required Artwork / Thru Cut layers are missing')
+   names={str(o.get('/Name','')).strip().casefold() for o in ocgs}
+   if not {'artwork','thru cut'}.issubset(names):raise ValueError('Required Artwork / Thru Cut layers are missing (found: '+', '.join(sorted(names))+')')
    count=0
    for obj in pdf.objects:
     if not isinstance(obj,pikepdf.Stream) or obj.get('/Subtype')!=Name('/Image'):continue
